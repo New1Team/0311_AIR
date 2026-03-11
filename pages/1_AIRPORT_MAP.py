@@ -1,48 +1,13 @@
 import streamlit as st
-import mariadb
 import pandas as pd
 import numpy as np
 import pydeck as pdk
+from db import get_data, options
 
-conn_params = {
-  "user": "root",
-  "password": "1234",
-  "host": "192.168.0.201",
-  "database" : "db_to_air",
-  "port" : int(3306)
-}
 if 'options' not in st.session_state:
 	st.session_state.options = 0
-options = ['전체','AA', 'AS', 'CO', 'DL', 'EA']
 
-@st.cache_data
-def get_data():
-    """데이터베이스에서 공항 데이터를 가져옵니다."""
-    try:
-        conn = mariadb.connect(**conn_params)
-        cursor = conn.cursor()
-        query = '''
-        SELECT distinct *
-        FROM 공항2
-        ORDER BY 1, 2;
-        '''
-        cursor.execute(query)
-        data = cursor.fetchall()
-        print(data)
-        df = pd.DataFrame(data, columns=['항공사코드', '공항명','공항코드', '도시', '위도', '경도'])
-        cursor.close()
-        conn.close()
-        
-        df['위도'] = pd.to_numeric(df['위도'], errors='coerce')
-        df['경도'] = pd.to_numeric(df['경도'], errors='coerce')
-        df.dropna(subset=['위도', '경도'], inplace=True)
-        
-        return df
 
-    except mariadb.Error as e:
-        st.error(f"데이터베이스 연결 오류: {e}")
-        st.info("왼쪽 사이드바의 'DB 연결 정보'를 올바르게 입력했는지 확인하세요.")
-        return pd.DataFrame() # 빈 데이터프레임 반환
 
 # --- STREAMLIT APP ---
 
@@ -55,9 +20,14 @@ st.title("항공사별 공항 위치 및 분포")
 # """)
 
 # 데이터 로드
-df = get_data()
+sql = '''
+        SELECT distinct *
+        FROM 공항2
+        ORDER BY 1, 2;
+        '''
+cols = ['항공사코드', '공항명', '공항코드', '도시', '위도', '경도']
+df = get_data(sql, cols)
 if not df.empty:
-    print(df)
     st.success("데이터베이스 연결 및 데이터 로드 성공!")
 
     # --- 데이터 필터링 ---
@@ -89,7 +59,6 @@ if not df.empty:
             zoom=1 if selected == '전체' else 3,
             pitch=0,
         ),
-        # 툴팁 설정: 데이터프레임의 컬럼명을 { } 안에 넣습니다.
         tooltip={
             "html": "<b>공항:</b> {도시}",
             "style": {"color": "white"}
@@ -109,12 +78,13 @@ if not df.empty:
 
     # 2. 분포도 차트 (항공사별 취항 공항 수)
     st.header("항공사별 취항 공항 수")
-    airline_counts = filtered_df['공항명'].value_counts().sort_index()
+    airline_counts = df['공항명'].value_counts().sort_index()
     st.bar_chart(airline_counts)
-    st.markdown("선택된 항공사들이 각각 몇 개의 공항에 취항하는지 보여줍니다.")
 
+    st.markdown("---")
     # 3. 데이터 테이블
     st.header("상세 데이터")
+    st.markdown(f"{selected} 항공사의 상세 데이터입니다.")
     st.dataframe(filtered_df)
 
 else:
