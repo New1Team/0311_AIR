@@ -1,6 +1,6 @@
 import streamlit as st
 
-st.title('streamlit 알아보기')
+st.title('항공사 SWOT 분석 데이터')
 
 st.set_page_config(
     page_title="항공사 SWOT 분석 데이터",
