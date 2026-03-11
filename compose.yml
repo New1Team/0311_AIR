@@ -1,0 +1,21 @@
+services:
+  n8n:
+    image: docker.n8n.io/n8nio/n8n:2.10.3
+    container_name: n8n
+    environment:
+      - N8N_HOST=aiedu.tplinkdns.com
+      - N8N_PORT=5678
+      - N8N_PROTOCOL=http
+      - NODE_ENV=production
+      - WEBHOOK_URL=http://aiedu.tplinkdns.com:6100
+      - N8N_SECURE_COOKIE=false
+      - TZ=Asia/Seoul
+      - GENERIC_TIMEZONE=Asia/Seoul
+      - LC_ALL:en_US.UTF-8
+    ports:
+      - 80:5678
+    volumes:
+      - n8n_storage:/home/node/.n8n
+
+volumes:
+  n8n_storage:
