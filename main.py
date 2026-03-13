@@ -3,7 +3,7 @@ import streamlit as st
 st.title('항공사 운항 리스크와 노선 전략 인사이트')
 
 st.set_page_config(
-    page_title="항공사 운항 리스크와 노선 전략 인사이트",
+    page_title="1팀",
     page_icon="🛫",
     layout="wide",
     # initial_sidebar_state="collapsed"
