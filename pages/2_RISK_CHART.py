@@ -3,6 +3,10 @@ import streamlit as st
 import pandas as pd
 import altair as alt
 
+st.title("지연 리스크 분석")
+st.markdown("◾ 운항 안정성 관리 지표")
+
+
 sql = '''
         SELECT *
         FROM risk_level
@@ -26,7 +30,6 @@ df2 = get_data(sql2, cols2)
 
  # --- 꺾은선 그래프 ---
 if not df.empty:
-    st.success("데이터베이스 연결 및 데이터 로드 성공!")
     st.line_chart(
         data=df2,
         x="항공사명", 
@@ -40,8 +43,6 @@ if not df.empty:
     # --- 막대그래프 ---
 
 if not df.empty:
-    st.success("데이터베이스 연결 및 데이터 로드 성공!")
-   
     st.header("항공사별 지연 그래프")
     # --- 데이터 필터링 ---
     col1, col2, col3 = st.columns(3)

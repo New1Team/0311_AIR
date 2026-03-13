@@ -8,16 +8,11 @@ if 'options' not in st.session_state:
 	st.session_state.options = 0
 
 
-
-# --- STREAMLIT APP ---
-
 st.set_page_config(layout="wide")
 
 st.title("항공사별 공항 위치 및 분포")
-# st.markdown("""
-# 이 앱은 MariaDB에 저장된 비행 데이터를 사용하여 항공사별 공항의 위치를 지도에 표시하고, 관련 분포도 차트를 보여줍니다.
-# **DB 연결 정보를 입력해야 데이터를 볼 수 있습니다.**
-# """)
+st.markdown("◾ 노선 확장 전략 수립")
+st.markdown("◾ 경쟁 항공사 비교")
 
 # 데이터 로드
 sql = '''
